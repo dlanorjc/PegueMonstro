@@ -14,7 +14,7 @@ bgImage.onload = function (){
     bgReady = true;
 }
 
-bgImage.src = 'imagens/background.png';
+bgImage.src = 'imagem/background.png'
 // Imagem do heroi
 
 let heroReady = false;
@@ -23,7 +23,7 @@ heroImage.onload = function(){
     heroReady = true;
 }
 
-heroImage.src = 'imagens/hero.png';
+heroImage.src = 'imagem/hero.png';
 // Imagem do monstro
 
 let monsterReady = false;
@@ -32,7 +32,7 @@ monsterImage.onload = function(){
     monsterReady = true;
 }
 
-monsterImage.src = 'imagens/monster.png';
+monsterImage.src = 'imagem/monster.png';
 
 // Objetos do jogo
 
@@ -65,34 +65,81 @@ const reset = function(){
 
 // Posicionamento randomica do monstro
 
-monster.eixoX = 32 + (math.random() * (canvas.width - 64));
-monster.eixoY = 32 + (math.random() * (canvas.height - 64));
+monster.eixoX = 32 + (Math.random() * (canvas.width - 64));
+monster.eixoY = 32 + (Math.random() * (canvas.height - 64));
 }
 
 // Atualiza os objetos do jogo
 
 const update = function (modifier){
-    if(38 || 87 in keysDown){
+    if(38  in keysDown){
         hero.eixoY -= hero.speed * modifier
     }
-    if(40 || 83 in keysDown){
+    if(40  in keysDown){
         hero.eixoY += hero.speed * modifier
     }
-    if(37 || 65 in keysDown){
+    if(37  in keysDown){
         hero.eixoX -= hero.speed * modifier
     }
-    if(39 || 68 in keysDown){
+    if(39  in keysDown){
         hero.eixoX += hero.speed * modifier
     }
 
 // Os personagens se encontraram ?
 
-    if(hero.eixoX <= (monster.eixoX + 32) 
+    if(
+    hero.eixoX <= (monster.eixoX + 32) 
     && monster.eixoX <= (hero.eixoX + 32 ) 
-    && hero.eixoy <= (monster.eixoy + 32 )
-    && monster.eixoy <= (hero.eixoy + 32 )){
+    && hero.eixoY <= (monster.eixoY + 32 )
+    && monster.eixoY <= (hero.eixoY + 32 )
+    ){
         ++monsterCaught;
         reset();
     }
 
 }
+
+// Renderiza tudo
+
+const render = function(){
+    if(bgReady){
+        contexto.drawImage(bgImage, 0, 0)
+    }
+
+    if(heroReady){
+        contexto.drawImage(heroImage, hero.eixoX, hero.eixoY);
+    }
+
+    if(monsterReady){
+        contexto.drawImage(monsterImage, monster.eixoX, monster.eixoY )
+    }
+
+// Pontuação do jogo
+    contexto.fillStyle = 'rgb(250, 250, 250)';
+    contexto.font = '24px helvetica';
+    contexto.textAlign = 'left';
+    contexto.textBaseline = 'top';
+    contexto.fillText('Monstros pegos: ' + monsterCaught, 32, 32);
+
+}
+// Controla o loop do jogo
+const main = function (){
+const now = Date.now();
+const delta = now - then;
+
+update(delta / 1000);
+render();
+then = now;
+
+// Executa o mais breve possível
+requestAnimationFrame(main);
+
+}
+
+// suporte cross-browser para requestAnimationFrame
+const w = window;
+const requestAnimationFrame = w.requestAnimationFrame ||  w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame
+
+let then = Date.now();
+reset();
+main();
